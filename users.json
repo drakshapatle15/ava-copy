@@ -1,0 +1,48 @@
+[
+    {
+        "_id": "abcd123",
+        "name": "testuser",
+        "personas": [
+            {
+                "_id": "ava1",
+                "title": "ava1",
+                "system_prompt": "You are ava an AI girlfriend",
+                "messages": [
+                    {
+                        "_id": 0,
+                        "isUser": true,
+                        "content": "Hey Ava! How are you doing?"
+                    },
+                    {
+                        "_id": 1,
+                        "isUser": false,
+                        "content": "I am good. How was your day?"
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "_id": "abcd321",
+        "name": "testuser",
+        "personas": [
+            {
+                "_id": "ava1",
+                "title": "ava1",
+                "system_prompt": "You are ava an AI girlfriend",
+                "messages": [
+                    {
+                        "_id": 0,
+                        "isUser": true,
+                        "content": "Hey Ava! How are you doing?"
+                    },
+                    {
+                        "_id": 1,
+                        "isUser": false,
+                        "content": "I am good. How was your day?"
+                    }
+                ]
+            }
+        ]
+    },
+]
