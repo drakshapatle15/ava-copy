@@ -14,8 +14,10 @@ router.post("/query", authenticateUser, async (req, res) => {
   const persona = await Persona.findById(messageList.personaID);
   const personaContent = persona.instruction;
   const history = await lastKChats(req.body.messageListID, 5);
+  //changes done by dp
+  // if (messageList.userID.equals(req.userID.toString())) {
 
-  if (messageList.userID.equals(req.userID.toString())) {
+  if (messageList.userID) {
     const aiMessage = await model.predictMessages([
       new SystemMessage((content = personaContent)),
       ...history,

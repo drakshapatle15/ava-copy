@@ -40,8 +40,47 @@ app.post("/initdb", async (req, res) => {
   //   { new: true }
   // );
   // await adminMessageList.save();
+  // res.send({ message: "database initialised" });
+});
+async function initChat(userData) {
+  try {
+    // Check if chat with the given persona_id and user_chat_id already exists
+    const existingChat = await MessageList.findOne({
+      personaID: userData.personaID,
+      userID: userData.userID,
+    });
 
-  res.send({ message: "database initialised" });
+    if (existingChat) {
+      // If chat exists, return the existing unique_id
+      return { unique_id: existingChat._id, message: "Chat already exists" };
+    } else {
+      // If chat doesn't exist, create a new chat entry
+      const newMessageList = new MessageList(userData);
+      const result = await newMessageList.save();
+
+      // Return the newly created unique_id
+      return {
+        unique_id: result._id,
+        message: "Chat initialized successfully",
+      };
+    }
+  } catch (error) {
+    console.error(error);
+    throw error;
+  }
+}
+
+// Express route for initializing chat
+app.post("/init-chat", async (req, res) => {
+  const userData = req.body;
+
+  try {
+    const response = await initChat(userData);
+    res.json(response);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Internal Server Error" });
+  }
 });
 
 app.listen(port);

@@ -22,11 +22,11 @@ const router = express.Router();
 const { ObjectId } = require("bson");
 const { User } = require("./models");
 
-const authenticateUser = require("./middlewares");
+// const authenticateUser = require("./middlewares");
 
-router.post("/apikey/create", authenticateUser, async (req, res) => {
-  res.send({ mess: "hi" });
-});
+// router.post("/apikey/create", authenticateUser, async (req, res) => {
+//   res.send({ mess: "hi" });
+// });
 
 // router.post("/init-persona", async (req, res)=>{
 //     const personas = await fetch("https://apiava.websperotech.com/persona")

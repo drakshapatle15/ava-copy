@@ -21,7 +21,7 @@
 //   }
 // };
 
-// module.exports = authenticateUser;
+// // module.exports = authenticateUser
 
 const { APIAuth, User } = require("./models");
 
