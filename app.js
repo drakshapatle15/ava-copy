@@ -33,12 +33,14 @@ app.post("/initdb", async (req, res) => {
 
   const samplePersona = await Persona.findOne({});
   console.log(samplePersona);
-  const adminMessageList = new MessageList(
-    { userID: adminKey.userID, personaID: samplePersona._id },
-    {},
-    { new: true }
-  );
-  await adminMessageList.save();
+
+  // const adminMessageList = new MessageList(
+  //   { userID: adminKey.userID, personaID: samplePersona._id },
+  //   {},
+  //   { new: true }
+  // );
+  // await adminMessageList.save();
+
   res.send({ message: "database initialised" });
 });
 
