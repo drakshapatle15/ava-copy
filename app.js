@@ -23,7 +23,7 @@ app.post("/initdb", async (req, res) => {
   await adminUser.save();
 
   const adminKey = new APIAuth(
-    { key: process.env.ADMIN_APIKEY, userID: adminUser._id, role: "admin" },
+    { key: process.env.ADMIN_APIKEY, userID: adminUser._id, role: "normal" },
     {},
     { new: true }
   );
@@ -52,7 +52,7 @@ async function initChat(userData) {
 
     if (existingChat) {
       // If chat exists, return the existing unique_id
-      return { unique_id: existingChat._id, message: "Chat already exists" };
+      return { message_id: existingChat._id, message: "Chat already exists" };
     } else {
       // If chat doesn't exist, create a new chat entry
       const newMessageList = new MessageList(userData);
@@ -60,7 +60,7 @@ async function initChat(userData) {
 
       // Return the newly created unique_id
       return {
-        unique_id: result._id,
+        message_id: result._id,
         message: "Chat initialized successfully",
       };
     }

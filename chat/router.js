@@ -7,7 +7,7 @@ const authenticateUser = require("../auth/middlewares");
 const { lastKChats } = require("./utils");
 const { SystemMessage, HumanMessage, AIMessage } = require("langchain/schema");
 
-router.post("/query", authenticateUser, async (req, res) => {
+router.post("/query", async (req, res) => {
   const messageList = await MessageList.findOne({
     _id: req.body.messageListID,
   });
@@ -53,7 +53,7 @@ router.post("/query", authenticateUser, async (req, res) => {
 //   res.send({ Message });
 // });
 
-router.get("/messages", authenticateUser, async (req, res) => {
+router.get("/messages", async (req, res) => {
   try {
     const messageListID = req.query.messageListID;
 
@@ -82,7 +82,7 @@ router.get("/messages", authenticateUser, async (req, res) => {
   }
 });
 
-router.delete("/messages/:messageID", authenticateUser, async (req, res) => {
+router.delete("/messages/:messageID", async (req, res) => {
   try {
     const messageID = req.params.messageID;
 
