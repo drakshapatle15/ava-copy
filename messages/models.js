@@ -9,19 +9,17 @@ const MessageListSchema = Schema(
       ref: "Persona",
     },
     userID: {
-      //   type: Schema.ObjectId,
-
       type: String,
       required: true,
-      ref: "User",
     },
 
     name: { type: String, required: true },
-    phone_no: { type: String, required: true },
-    country_code: { type: String, required: true },
+    phoneNo: { type: String, required: true },
+    countryCode: { type: String, required: true },
   },
   { timestamps: true }
 );
+MessageListSchema.index({ phoneNo: 1, personaID: 1 }, { unique: true });
 
 const MessageList = mongoose.model("MessageList", MessageListSchema);
 

@@ -5,17 +5,19 @@ dotenv.config();
 var db = require("./database");
 const bodyParser = require("body-parser");
 const chatRouter = require("./chat/router");
+const messageRouter = require("./chat/router");
 const personaRouter = require("./persona/router");
 const initializePersonas = require("./persona/migrate-v1");
 const port = 5005;
 
 var app = express();
 app.use(bodyParser.json());
-app.use("/chat", chatRouter);
-app.use("/persona", personaRouter);
+app.use("/messages", messageRouter);
+app.use("/chats", chatRouter);
+app.use("/personas", personaRouter);
 
 const { APIAuth, User } = require("./auth/models");
-const { MessageList } = require("./chat/models");
+const { MessageList } = require("./messages/models");
 const { Persona } = require("./persona/models");
 
 app.post("/initdb", async (req, res) => {

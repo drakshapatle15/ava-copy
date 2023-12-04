@@ -1,127 +1,64 @@
 const express = require("express");
-const router = express.Router();
+const {Message, MessageList} = require("../messages/models")
+const {Persona} = require("../persona/models")
 const { model } = require("./llmchain");
-const { Message, MessageList } = require("./models");
-const { Persona } = require("../persona/models");
-const authenticateUser = require("../auth/middlewares");
 const { lastKChats } = require("./utils");
 const { SystemMessage, HumanMessage, AIMessage } = require("langchain/schema");
 
-router.post("/query", async (req, res) => {
-  const messageList = await MessageList.findOne({
-    _id: req.body.messageListID,
-  });
-  const persona = await Persona.findById(messageList.personaID);
-  const personaContent = persona.instruction;
-  const history = await lastKChats(req.body.messageListID, 5);
-  //changes done by dp
-  // if (messageList.userID.equals(req.userID.toString())) {
 
-  if (messageList.userID) {
-    const aiMessage = await model.predictMessages([
-      new SystemMessage((content = personaContent)),
-      ...history,
-      new HumanMessage((content = req.body.textInput)),
-    ]);
+const router = express.Router();
 
-    res.send({ message: aiMessage.content });
-    const userMessage = await Message.create({
-      role: "user",
-      content: req.body.textInput,
-      isUser: true,
-      messageListID: messageList._id,
-    });
-    const assitantMessage = await Message.create({
-      role: "assistant",
-      content: aiMessage.content,
-      isUser: false,
-      messageListID: messageList._id,
-    });
-  } else {
-    console.log("here");
-    res.status(401).send();
-  }
+router.put("/:messageListID", async (req, res) => {
+
+	const messageListID = req.params.messageListID;
+	const textInput = req.body.textInput;
+
+	if (!messageListID || !textInput) {
+		res.status(422).json({ "message": "could not find messageListID and/or textInput" })
+		return
+	}
+
+	const messageList = await MessageList.findById(messageListID);
+	console.log(messageList)
+
+	if (!messageList) {
+		res.status(404).json({ "message": "could not find the MessageList" })
+		return
+	}
+
+	const persona = await Persona.findById(messageList.personaID);
+
+	if (!persona) {
+		res.status(404).json({ "message": "could not find the given Persona" })
+		return
+	}
+
+	const personaContent = persona.instruction;
+
+
+	const history = await lastKChats(messageListID, 5);
+
+	const aiMessage = await model.predictMessages([
+		new SystemMessage((content = personaContent)),
+		...history,
+		new HumanMessage((content = textInput)),
+	]);
+
+	const userMessage = await Message.create({
+		role: "user",
+		content: textInput,
+		isUser: true,
+		messageListID: messageList._id,
+	});
+	const assitantMessage = await Message.create({
+		role: "assistant",
+		content: aiMessage.content,
+		isUser: false,
+		messageListID: messageList._id,
+	});
+
+	res.status(201).json({ message: aiMessage.content });
+
 });
 
-// router.get("/messages/:messageListID", authenticateUser, async (req, res) => {
-//   const messageList = await Message.findOne({
-//     _id: req.params.messageListID,
-//   });
-//   console.log(messageList.userID);
-//   console.log(req.userID);
-
-//   res.send({ Message });
-// });
-
-router.get("/messages", async (req, res) => {
-  try {
-    const messageListID = req.query.messageListID;
-
-    // Check if the messageListID is provided in the query parameters
-    if (!messageListID) {
-      return res
-        .status(400)
-        .json({ error: "messageListID is required in the query parameters" });
-    }
-
-    // Find all messages for the given messageListID
-    const messages = await Message.find({ messageListID });
-    console.log(messages);
-    // Check if messages were found
-    if (!messages || messages.length === 0) {
-      return res
-        .status(404)
-        .json({ error: "No messages found for the provided messageListID" });
-    }
-
-    // Return the messages
-    res.json({ messages });
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ error: "Internal server error" });
-  }
-});
-
-router.delete("/messages/:messageID", async (req, res) => {
-  try {
-    const messageID = req.params.messageID;
-
-    // Check if the messageID is provided in the URL parameters
-    if (!messageID) {
-      return res
-        .status(400)
-        .json({ error: "messageID is required in the URL parameters" });
-    }
-
-    // Find and delete the message by its ID
-    const deletedMessage = await Message.deleteOne({ _id: messageID });
-
-    // Check if a message was deleted
-    if (deletedMessage.deletedCount === 0) {
-      return res
-        .status(404)
-        .json({ error: "No message found for the provided messageID" });
-    }
-
-    // Return a success message
-    res.json({ message: "Message deleted successfully" });
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ error: "Internal server error" });
-  }
-});
-
-router.get("/test", async (req, res) => {
-  const { MessageList, Message } = require("./models");
-  const lastKChats = async (messageListID, k) => {
-    const recentChats = await Message.find({}).limit(k);
-    const format = [];
-    recentChats.map((chat) => {
-      format.push([chat.isUser ? "user" : "ai", chat.content]);
-    });
-    return format;
-  };
-  await lastKChats("65512a2940e41ce1a71cb266", 4);
-});
-
-module.exports = router;
+module.exports = router

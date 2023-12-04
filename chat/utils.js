@@ -1,4 +1,4 @@
-const { MessageList, Message } = require("./models")
+const { MessageList, Message } = require("../messages/models")
 const {SystemMessage, HumanMessage, AIMessage} = require("langchain/schema")
 
 

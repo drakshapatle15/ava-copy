@@ -1,5 +1,5 @@
 const mongoose = require("mongoose");
-const { MessageListSchema } = require("../chat/models");
+const { MessageListSchema } = require("../messages/models");
 const Schema = mongoose.Schema;
 
 var alnum = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
