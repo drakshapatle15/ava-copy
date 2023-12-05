@@ -34,6 +34,7 @@ router.post("/create", async (req, res) => {
 router.put("/:messageListID", async (req, res) => {
 
 	const messageListID = req.params.messageListID;
+	console.log(messageListID)
 	const textInput = req.body.textInput;
 
 	if (!messageListID || !textInput) {
@@ -63,7 +64,7 @@ router.put("/:messageListID", async (req, res) => {
 		messageListID: messageList._id,
 	});
 
-	res.status(201).json(userMessage);
+	return res.status(201).json(userMessage);
 
 });
 
@@ -78,13 +79,19 @@ router.get("/:messageListID", async (req, res) => {
 	}
 
 	try {
-		const chatHistory = await Message.find({ messageListID:  messageListID});
-		console.log({ messageListID:  new ObjectId(messageListID)});
+		const chatHistory = await Message.find({ messageListID:  messageListID}).lean().exec();
+
+		// console.log({ messageListID:  new ObjectId(messageListID)});
 		console.log(chatHistory);
-		res.status(200).json(chatHistory);
+		return res.status(200).json(chatHistory);
 	}
-	catch {
-		res.status(500);
+	catch (error){
+		console.log('errrorrr',error)
+		 return res.status(500).send(error);
+
+
+
+
 	}
 });
 
