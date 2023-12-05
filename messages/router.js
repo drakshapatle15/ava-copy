@@ -4,6 +4,33 @@ const { Message, MessageList } = require("./models");
 const { Persona } = require("../persona/models");
 
 
+
+
+router.post("/create", async (req, res) => {
+
+	const persona = Persona.findById(req.body.personaID);
+
+	if (!persona || persona.size() == 0) {
+		res.status(404).json({ "message": "no Persona found with the given personaID" })
+		return;
+	}
+	try {
+		const messageListAttributes = {
+			personaID: req.body.personaID,
+			userID: req.body.userID,
+			name: req.body.name,
+			phoneNo: req.body.phoneNo,
+			countryCode: req.body.countryCode,
+		}
+		const messageList = new MessageList(messageListAttributes)
+		await messageList.save()
+		res.status(201).json(messageList)
+	}
+	catch {
+		res.status(500);
+	}
+});
+
 router.put("/:messageListID", async (req, res) => {
 
 	const messageListID = req.params.messageListID;
@@ -40,30 +67,6 @@ router.put("/:messageListID", async (req, res) => {
 
 });
 
-router.post("/create", async (req, res) => {
-
-	const persona = Persona.findById(req.body.personaID);
-
-	if (!persona || persona.size() == 0) {
-		res.status(404).json({ "message": "no Persona found with the given personaID" })
-		return;
-	}
-	try {
-		const messageListAttributes = {
-			personaID: req.body.personaID,
-			userID: req.body.userID,
-			name: req.body.name,
-			phoneNo: req.body.phoneNo,
-			countryCode: req.body.countryCode,
-		}
-		const messageList = new MessageList(messageListAttributes)
-		await messageList.save()
-		res.status(201).json(messageList)
-	}
-	catch {
-		res.status(500);
-	}
-});
 
 router.get("/:messageListID", async (req, res) => {
 

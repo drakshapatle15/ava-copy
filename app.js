@@ -5,7 +5,7 @@ dotenv.config();
 var db = require("./database");
 const bodyParser = require("body-parser");
 const chatRouter = require("./chat/router");
-const messageRouter = require("./chat/router");
+const messageRouter = require("./messages/router");
 const personaRouter = require("./persona/router");
 const initializePersonas = require("./persona/migrate-v1");
 const port = 5005;
