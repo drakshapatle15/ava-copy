@@ -20,6 +20,7 @@
     "readable-stream": "^4.4.2"
   },
   "devDependencies": {
+    "node-env-run": "^4.0.2",
     "nodemon": "^3.0.1"
   }
 }

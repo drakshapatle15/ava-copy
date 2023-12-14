@@ -1,6 +1,5 @@
 const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
-
 const MessageListSchema = Schema(
   {
     personaID: {
@@ -17,6 +16,8 @@ const MessageListSchema = Schema(
     phoneNo: { type: String, required: true },
     countryCode: { type: String, required: true },
   },
+  { unique: true, index: { personaID: 1, userID: 1 } },
+
   { timestamps: true }
 );
 MessageListSchema.index({ phoneNo: 1, personaID: 1 }, { unique: true });
