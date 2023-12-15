@@ -354,44 +354,81 @@ const router = express.Router();
 const { Message, MessageList } = require("./models");
 const { Persona } = require("../persona/models");
 
+// router.post("/create", async (req, res) => {
+//   const persona = Persona.findById(req.body.personaID);
+
+//   // if (!persona || persona.size() == 0) {
+//   //   res
+//   //     .status(404)
+//   //     .json({ message: "no Persona found with the given personaID" });
+//   //   return;
+//   // }
+
+//   const personaID = req.body.personaID;
+//   const userID = req.body.userID;
+
+//   // Check if a message already exists with the same user ID and persona ID
+//   const existingMessageList = await MessageList.findOne({
+//     personaID: personaID,
+//     userID: userID,
+//   });
+
+//   if (existingMessageList) {
+//     return res.status(400).json({
+//       message:
+//         "A message list already exists with the given user ID and persona ID",
+//     });
+//   }
+//   try {
+//     const messageListAttributes = {
+//       personaID: req.body.personaID,
+//       userID: req.body.userID,
+//       name: req.body.name,
+//       phoneNo: req.body.phoneNo,
+//       countryCode: req.body.countryCode,
+//     };
+//     const messageList = new MessageList(messageListAttributes);
+//     await messageList.save();
+//     res.status(201).json(messageList);
+//   } catch {
+//     res.status(500);
+//   }
+// });
+
 router.post("/create", async (req, res) => {
-  const persona = Persona.findById(req.body.personaID);
-
-  // if (!persona || persona.size() == 0) {
-  //   res
-  //     .status(404)
-  //     .json({ message: "no Persona found with the given personaID" });
-  //   return;
-  // }
-
   const personaID = req.body.personaID;
   const userID = req.body.userID;
 
-  // Check if a message already exists with the same user ID and persona ID
-  const existingMessageList = await MessageList.findOne({
-    personaID: personaID,
-    userID: userID,
-  });
-
-  if (existingMessageList) {
-    return res.status(400).json({
-      message:
-        "A message list already exists with the given user ID and persona ID",
-    });
-  }
   try {
+    // Check if a message list already exists with the same user ID and persona ID
+    let existingMessageList = await MessageList.findOne({
+      personaID: personaID,
+      userID: userID,
+    });
+
+    if (existingMessageList) {
+      // If it exists, return a message along with the existing message list ID
+      return res.status(200).json({
+        message: "Message list already exists",
+        messageListID: existingMessageList._id,
+      });
+    }
+
+    // If it doesn't exist, create a new message list
     const messageListAttributes = {
-      personaID: req.body.personaID,
-      userID: req.body.userID,
+      personaID: personaID,
+      userID: userID,
       name: req.body.name,
       phoneNo: req.body.phoneNo,
       countryCode: req.body.countryCode,
     };
+
     const messageList = new MessageList(messageListAttributes);
     await messageList.save();
     res.status(201).json(messageList);
-  } catch {
-    res.status(500);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Internal server error" });
   }
 });
 

@@ -100,7 +100,7 @@ router.put("/:messageListID", async (req, res) => {
 
     const personaContent = persona.instruction;
     console.log(personaContent);
-    const history = await lastKChats(messageListID, 500);
+    const history = await lastKChats(messageListID, 100);
     const aiMessage = await model.predictMessages([
       new SystemMessage({ content: personaContent }),
       ...history,
