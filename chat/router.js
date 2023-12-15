@@ -98,10 +98,13 @@ router.put("/:messageListID", async (req, res) => {
       return;
     }
 
-    const personaContent = persona.instruction;
+    let personaContent = persona.instruction;
+
+    personaContent = personaContent.trim();
+    personaContent = personaContent.replace(/<[^>]*>/g, "");
     console.log(personaContent);
 
-    const historySize = persona.name === "Ava" ? 20 : 100;
+    const historySize = persona.name === "Ava" ? 35 : 150;
     const history = await lastKChats(messageListID, historySize);
 
     // const history = await lastKChats(messageListID, 100);
